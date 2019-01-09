@@ -1,5 +1,7 @@
 import requests, csv
 from datetime import timedelta, datetime
+from urllib.parse import urlencode
+
 
 #work out date three years ago or 1095 days ago
 
@@ -13,8 +15,9 @@ date=(date_ago.strftime("%Y-%m-%d"))
 print("Gathering records from before: {}".format(date))
 
 # Access API with search criteria
+params = {'query': 'type:ticket solved<{}'.format(date)}
 
-url = "https://cabinetoffice.zendesk.com/api/v2/search.json?query=type:ticket solved<{}".format(date)
+url = "https://cabinetoffice.zendesk.com/api/v2/search.json?query={}".format(urlencode(params))
 
 # Do the HTTP get request
 response = requests.get(url, auth=(user, pwd))
