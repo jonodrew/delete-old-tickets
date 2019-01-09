@@ -19,24 +19,22 @@ params = {'query': 'type:ticket solved<{}'.format(date)}
 
 url = "https://cabinetoffice.zendesk.com/api/v2/search.json?query={}".format(urlencode(params))
 
-# Do the HTTP get request
-response = requests.get(url, auth=(user, pwd))
-
-# Check for HTTP codes other than 200
-if response.status_code != 200:
-    print('Status:', response.status_code, 'Problem with the request. Exiting.')
-    exit()
-
-# Decode the JSON response into a dictionary and use the data
-data = response.json()
-
-
 ### this works below!
 # The below code pulls ticket ids and the last updated dates of all tickets older than the date specified in the API search above
 # and places in a csv file.
 
 #while loop to proceed through pages of tickets pulled from API
 while data['next_page'] != "null":
+    # Do the HTTP get request
+    response = requests.get(url, auth=(user, pwd))
+
+    # Check for HTTP codes other than 200
+    if response.status_code != 200:
+        print('Status:', response.status_code, 'Problem with the request. Exiting.')
+        exit()
+    # Decode the JSON response into a dictionary and use the data
+    data = response.json()
+
     for ticket in data['results']:
         id = ticket['id']
         ticketurl = ticket['url']
@@ -55,14 +53,6 @@ while data['next_page'] != "null":
 
     #find the next url to pull tickets from
     url=data['next_page']
-
-    #Go to next page of tickets
-    response = requests.get(url, auth=(user, pwd))
-    if response.status_code != 200:
-        print('Status:', response.status_code, 'Problem with the request. Exiting.')
-        exit()
-    data = response.json()
-    #repeat - go back to line 31 for next page of tickets
 
 
 #Permanently/hard delete tickets from the API
