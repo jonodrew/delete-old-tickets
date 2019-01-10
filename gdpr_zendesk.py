@@ -19,6 +19,24 @@ params = {'query': 'type:ticket solved<{}'.format(date)}
 
 url = "https://cabinetoffice.zendesk.com/api/v2/search.json?query={}".format(urlencode(params))
 
+def get_next_page(url, user, pwd):
+    response = requests.get(url, auth=(user, pwd))
+    if response.status_code != 200:
+        print('Status:', response.status_code, 'Problem with the request. Exiting.')
+        exit()
+    else:
+        return response.json()
+
+def delete_ticket(ticket, user, pwd):
+    id = ticket['id']
+    ticketurl = ticket['url']
+    updated = ticket['updated_at']
+    print("ticket id: {}".format(id))
+    print("Ticket last updated: {}".format(updated))
+
+    #delete the ticket from Zendesk
+    requests.delete(ticketurl, auth=(user, pwd))
+
 ### this works below!
 # The below code pulls ticket ids and the last updated dates of all tickets older than the date specified in the API search above
 # and places in a csv file.
